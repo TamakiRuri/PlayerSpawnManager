@@ -60,8 +60,9 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   savePlayerPosition: 1
   isWhiteListedOnly: 0
+  isWhiteListExcluded: 0
+  persistence: 0
   saveInverval: 10
-  saveOnlyInArea: 0
 --- !u!114 &7763857556319528016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +82,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
-  _syncMethod: 2
+  _syncMethod: 3
   serializedProgramAsset: {fileID: 11400000, guid: 507912899440c504f8630938e5c69f2f,
     type: 2}
   programSource: {fileID: 11400000, guid: ed584ee92cd27ec458da3bfd992053b7, type: 2}

@@ -36,6 +36,8 @@ This mode only work on Rejoins.
 
 #### エリアモード / Area Mode
 
+> 一時的に無効になっています。
+
 Persistenceモードの拡張モードです。指定のエリアでしか保存しなくなります。
 
 プレイヤーの場所はエリアにはいったすぐに一回保存され、あとは設定の時間間隔で保存されます。
@@ -44,6 +46,7 @@ An extension of Persistence mode. This will let the script only save when the pl
 
 When Player get into an area, the position will be saved once, and the script will save the position every few seconds.
 
+<!-- 
 #### サポーター（有料）限定機能 / Supporter Only (Paid) Functions
 
 サポーター版ではウェイポイントに特化した、Player Waypoint Managerを同封します。
@@ -57,6 +60,7 @@ For the supporter version, the waypoint specialized Player Waypoint Manager is i
 Player Waypoint Manager is specialized in waypoints. Placing multiple areas, and waypoint numbering management are easier in this version.
 
 However, Player Waypoint Manager and Player Spawn Manager cannot be used at the same time due to function override issues.
+-->
 
 ### 注意事項 / Caution
 
@@ -99,6 +103,8 @@ Enable Save Player Position and then you're good to go.
 Save Interval is how long it will take to before the next time the player's location is saved.
 
 #### エリアモード / Area Mode
+
+> 一時的に無効になっています。
 
 Persistenceモードを有効にしたあと、Save Only In Areaを有効にすると有効になります。
 
