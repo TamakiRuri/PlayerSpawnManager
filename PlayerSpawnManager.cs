@@ -10,9 +10,8 @@ using VRC.Udon;
 public class PlayerSpawnManager : LibPlayerSpawnManager
 {
     /*
-    Modes: Whitelist Persistence Single-Session
+    Modes: Whitelist Synced Persistence
     Other settings: white list
-    Area Mode: Removed
     */
     [Header(" ")]
     [Header("Player Spawn Manager - プレイヤーのスポーン地点を設定、管理するスクリプト")]
@@ -39,10 +38,16 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
     [Header(" ")]
     [Header("指定の時間（単位：秒）ごとにプレイヤーの場所を保存し、")]
     [Header("次回Joinのときに保存された場所にテレポートされます")]
-    [Header("Respawnと別のインスタンスでは動作しません")]
+    [Header("同期モードでは別のインスタンスで動作しません")]
     [Header("Save player position so they will be teleported there when they join the same instance the next time.")]
     [Header("Will not work on Respawns")]
     [SerializeField] private bool savePlayerPosition = true;
+
+    [Header(" ")]
+    [Header("同期/保存の時間間隔(秒)")]
+    [Header("時間を短くしすぎると重くなる可能性があります")]
+    [Header("In seconds. This could become laggy if saving too frequently")]
+    [SerializeField] private float saveInverval = 5f;
 
     [Header(" ")]
     [Header("ホワイトリストに入ってる人しか使えないようにする")]
@@ -53,59 +58,56 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
     [SerializeField] private bool isWhiteListExcluded;
 
     [Header(" ")]
-    [Header("Persistence機能")]
+    [Header("同期モード専用")]
+    [Header("同期する最大人数を制限する")]
+    [Header("制限を超えると、いまインスタンスにいないプレイヤーのデータが上書きされます")]
+    [Header("インスタンスの最大人数より大きく設定してください")]
+    [Header("重くなりますのでできるだけ100以下でお願いします")]
+    [Header("Synced Mode Only")]
+    [Header("Limit maximum amout of people being saved")]
+    [Header("Exceeding the limit will cause data of players who aren't in the instance to be overwritten")]
+    [Header("Don't set it to over 100 or the game could be laggy when there are a lot of people")]
+    [Header("It should be bigger than the maximum allowed player in the instance")]
+    [SerializeField] private bool limitSaveCount = true;
+    [SerializeField] private int limitThrehold = 60;
+
     [Header(" ")]
-    [Header("指定の時間（単位：秒）ごとにプレイヤーの場所を保存し、")]
-    [Header("次回Joinのときに保存された場所にテレポートされます")]
-    [Header("Respawnでは動作しません。別のインスタンスでも動作します")]
+    [Header("Persistenceモード")]
+    [Header(" ")]
+    [Header("ローカルで保存するため同期を行いません")]
+    [Header("同期モードと違い別のインスタンスでも動作します")]
     [Header("好ましくない場合もございます")]
+    [Header("オンにしない場合では同期モードになります")]
     [Header("Save player position so they will be teleported there for the next time")]
     [Header("Will not work on Respawns but will work in other instances")]
     [Header("May not be favorable in some situations")]
+    [Header("This script will work as Synced Mode if this option is not on")]
     [SerializeField] private bool persistence = false;
 
+    
+    
     [Header(" ")]
-    [Header("保存の時間間隔(秒)")]
-    [Header("時間を短くしすぎると重くなる可能性があります")]
-    [Header("In seconds. This could become laggy if saving too frequently")]
-    [SerializeField] private float saveInverval = 5f;
-    // [Header(" ")]
-    // [Header("指定のエリアでしか保存しないようにする")]
-    // [Header("Respawnしない限りいつでも指定のエリアにテレポートされることになるため")]
-    // [Header("好ましくない場合もございます")]
-    // [Header("このプレハブにあるコライダーを調整する必要があります")]
-    // [Header("Triggerなコライダーが必要です")]
-    // [Header("コライダーを複数いれても大丈夫です")]
-    // [Header("Persistence モードのみ有効")]
-    // [Header("Save only in area set by the player")]
-    // [Header("Player will always be teleported to the area")]
-    // [Header("and this could be not ideal for some situations")]
-    // [Header("Editing the colliders on this prefab is required to use this")]
-    // [Header("Trigger must be turned on for this to work")]
-    // [Header("You can have multiple colliders here")]
-    // [Header("Only works on Persistence Mode")]
-    // [SerializeField] private bool saveOnlyInArea = false;
+    [Header("Debug Mode")]
+    [Header("保存間隔でログが生成されます。プレイヤー人数が多いほど長くなるため、通常使用ではおすすめしません。")]
+    [Header("Generate Log every time player location is saved. Could be really long and frequent")]
+    [Header("Not recommended on normal use")]
+    [SerializeField] private bool debugMode = false;
 
     private string PlayerPositionKey = "SavedPosition";
     private string PlayerRotationKey = "SavedRotation";
     private string PlayerSavedKey = "PlayerSaved";
-    private bool isPaused = false;
+    [UdonSynced] private bool isPaused = false;
     private bool isSaved = false;
-    //private bool isInArea = false;
     private bool shouldOn = false;
     private bool haveTeleported = false;
     private VRCPlayerApi[] players;
     [UdonSynced] private string[] savedUsers = new string[0];
-    //[UdonSynced] private string[] userInArea;
     [UdonSynced] private Vector3[] savedPlayerLocation = new Vector3[0];
     [UdonSynced] private Quaternion[] savedPlayerQuaternion = new Quaternion[0];
 
     void Start()
     {
-        if (Networking.LocalPlayer.isMaster)
         shouldOn = UserCheck(Networking.LocalPlayer);
-        // if (saveOnlyInArea && !savePlayerPosition)
-        //     saveOnlyInArea = false;
         if (shouldOn && targetTransform != null && !isSaved)
             Networking.LocalPlayer.TeleportTo(targetTransform.position, targetTransform.rotation);
 
@@ -114,7 +116,7 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
 
     }
 
-    //Whitelist
+    // Whitelist
     public override void OnPlayerRespawn(VRCPlayerApi player)
     {
         if (!player.isLocal) return;
@@ -128,12 +130,13 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
         }
     }
 
+    // Events
 
     public override void OnPlayerJoined(VRCPlayerApi player)
     {
         players = new VRCPlayerApi[VRCPlayerApi.GetPlayerCount()];
         VRCPlayerApi.GetPlayers(players);
-        Debug.Log("Player Spawn Manager: Join Debug " + PrintDebugInfo());
+        PrintDebugInfo("Join Debug ");
     }
     public override void OnPlayerLeft(VRCPlayerApi player)
     {
@@ -143,12 +146,12 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
         {
             RequestSerialization();
         }
-        Debug.Log("Player Spawn Manager: Exit Debug " + PrintDebugInfo());
+        PrintDebugInfo("Exit Debug ");
     }
 
 
 
-    // Single Session
+    // Synced
     private void SaveToSyncedObjects(VRCPlayerApi player)
     {
         int index = Array.IndexOf(savedUsers, player.displayName);
@@ -158,37 +161,38 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
             savedPlayerLocation[index] = player.GetPosition(); 
             savedPlayerQuaternion[index] = player.GetRotation();
         }
+        else if (savedUsers.Length >= limitThrehold)
+        {
+            ReplaceInfo(player);
+        }
         else
         {
             savedUsers = Append(savedUsers, player.displayName);
             savedPlayerLocation = Append(savedPlayerLocation, player.GetPosition());
             savedPlayerQuaternion = Append(savedPlayerQuaternion, player.GetRotation());
         }
-        else Debug.LogWarning("Player Spawn Manager: Save Debug: Player Object Not Present");
+        else Debug.LogWarning("Player Spawn Manager: Save: Player Object Not Valid");
     }
 
-    // Single Session
+    // Synced
     public override void OnDeserialization()
     {
         if (!savePlayerPosition || persistence) return;
+        if (isPaused) return;
         if (!shouldOn && isWhiteListedOnly) return;
         if (shouldOn && isWhiteListExcluded) return;
         if (haveTeleported) return;
         int index = Array.IndexOf(savedUsers, Networking.LocalPlayer.displayName);
-        // if (index == -1)
-        // {
-        //     index = Array.IndexOf(userInArea, Networking.LocalPlayer.displayName);
-        // }
         if (index == -1)
         {
             haveTeleported = true;
-            Debug.Log("Player Spawn Manager: Join Debug : No Saved Location");
+            Debug.Log("Player Spawn Manager: Join : No Saved Location");
             return;
         }
-        Debug.Log("Player Spawn Manager: Joiner Debug " + PrintDebugInfo());
+        PrintDebugInfo("Joiner Debug ");
         Networking.LocalPlayer.TeleportTo(savedPlayerLocation[index], savedPlayerQuaternion[index]);
         haveTeleported = true;
-        Debug.Log("Player Spawn Manager: Join Debug : Teleported");
+        Debug.Log("Player Spawn Manager: Join : Teleported");
     }
 
 
@@ -239,7 +243,7 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
         {
             if (players == null)
             {
-                Debug.LogWarning("Player Spawn Manager: Save Debug: Not Initialized");
+                Debug.LogWarning("Player Spawn Manager: Save: Not Initialized");
                 SendCustomEventDelayedSeconds(nameof(SavePlayerTransform), saveInverval);
                 return;
             }
@@ -250,47 +254,11 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
             {
                 SaveToSyncedObjects(players[i]);
             }
-            Debug.Log("Player Spawn Manager: Save Debug " + PrintDebugInfo());
+            PrintDebugInfo("Save Debug ");
         }
 
-        //if ((saveOnlyInArea && isInArea) || !saveOnlyInArea)
         SendCustomEventDelayedSeconds(nameof(SavePlayerTransform), saveInverval);
     }
-
-    
-    
-    // Area Mode
-    // Removed due to logic issues.
-    // public override void OnPlayerTriggerEnter(VRCPlayerApi player)
-    // {
-    //     if (!saveOnlyInArea) return;
-    //     //if (!player.isLocal) return;
-    //     if (player.isLocal) isInArea = true;
-    //     else if (!persistence)
-    //     {
-    //         if (Array.IndexOf(userInArea, "") != -1)
-    //             {
-    //                 userInArea[Array.IndexOf(userInArea, "")] = player.displayName;
-    //             }
-    //         else userInArea = Append(userInArea, player.displayName);
-    //         RequestSerialization();
-    //     }
-    //     SendCustomEvent(nameof(SavePlayerTransform));
-    // }
-    // public override void OnPlayerTriggerExit(VRCPlayerApi player)
-    // {
-    //     if (!saveOnlyInArea) return;
-    //     //if (!player.isLocal) return;
-    //     if (player.isLocal) isInArea = false;
-    //     else if (!persistence)
-    //     {
-    //         int index = Array.IndexOf(userInArea, player.displayName);
-    //         if (index != -1)
-    //         {
-    //             userInArea[index] = "";
-    //         }
-    //     }
-    // }
 
     // Utils
     private bool UserCheck(VRCPlayerApi player)
@@ -307,8 +275,35 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
         }
         return false;
     }
+    private void PrintDebugInfo(string mode)
+    {
+        if (debugMode)
+        {
+            Debug.Log("Player Spawn Manager: " + mode + JoinDebugInfo(savedUsers) + JoinDebugInfo(savedPlayerLocation));
+        }
+    }
+    private void ReplaceInfo(VRCPlayerApi player)
+    {
+        for(int i = 0; i<savedUsers.Length; i++)
+        {
+            if (Array.IndexOf(players, savedUsers[i]) == -1)
+            {
+                savedUsers[i] = player.displayName;
+                savedPlayerLocation[i] = player.GetPosition(); 
+                savedPlayerQuaternion[i] = player.GetRotation();
+                RequestSerialization();
+                return;
+            }
+        }
+        if (limitThrehold < VRCPlayerApi.GetPlayerCount() && limitThrehold < 200)
+        {
+            Debug.Log("Player Spawn Manager: Player Count Higher than threhold. Changing array limit automatically.");
+            limitThrehold = VRCPlayerApi.GetPlayerCount() + 10;
+            ReplaceInfo(player);
+        }
+    }
 
-    // For Info Center
+    // Info Center
     public bool UserCheck()
     {
         return Array.IndexOf(usernames, Networking.LocalPlayer.displayName) != -1 || (allowInstanceOwner && Networking.LocalPlayer.isInstanceOwner);
@@ -324,6 +319,7 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
             isPaused = true;
             isSaved = false;
             PlayerData.SetBool(PlayerSavedKey, false);
+            RequestSerialization();
         }
     }
     public bool GetActive()
@@ -355,12 +351,8 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
             Debug.Log("Player Spawn Manager: Teleport Debug : No Saved Location");
             return;
         }
-        Debug.Log("Player Spawn Manager: Teleport Debug " + PrintDebugInfo());
+        PrintDebugInfo("Teleport Debug ");
         Networking.LocalPlayer.TeleportTo(savedPlayerLocation[index], savedPlayerQuaternion[index]);
-    }
-    private string PrintDebugInfo()
-    {
-        return JoinDebugInfo(savedUsers) + JoinDebugInfo(savedPlayerLocation);
     }
     
 

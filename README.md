@@ -24,43 +24,29 @@ Set the spawn* of the players in the Whitelist (and/or instance owner) to a diff
 
 This also applys to Respawns and Rejoins.
 
+#### 同期モード / Synced Mode
+
+プレイヤーの場所をある設定可能な時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます*。
+
+同じインスタンスでのRejoinのみ動作します。
+
+Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved*.
+
+This mode only works on Rejoins at the same instance.
+
 #### Persistenceモード / Persistence Mode
 
 プレイヤーの場所をある設定可能な時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます*。
 
-PersistenceモードはRejoinのみ想定しています。
+同期モードと同じRejoinのみ想定していますが、同じワールドの別インスタンスにも動作します。
 
 Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved*.
 
-This mode only work on Rejoins.
+This mode works on Rejoins on all instances of the same world.
 
-#### エリアモード / Area Mode
+### その他設定 / Other Settings
 
-> 一時的に無効になっています。
-
-Persistenceモードの拡張モードです。指定のエリアでしか保存しなくなります。
-
-プレイヤーの場所はエリアにはいったすぐに一回保存され、あとは設定の時間間隔で保存されます。
-
-An extension of Persistence mode. This will let the script only save when the player is in a certain area.
-
-When Player get into an area, the position will be saved once, and the script will save the position every few seconds.
-
-<!-- 
-#### サポーター（有料）限定機能 / Supporter Only (Paid) Functions
-
-サポーター版ではウェイポイントに特化した、Player Waypoint Managerを同封します。
-
-Player Waypoint Managerはエリア機能が強化され、エリアを複数設置することや、ウェイポイントの番号管理がより簡単になっています。
-
-ただし、関数の競合問題により、Player Waypoint ManagerとPlayer Spawn Managerを同時に使用できません。
-
-For the supporter version, the waypoint specialized Player Waypoint Manager is included.
-
-Player Waypoint Manager is specialized in waypoints. Placing multiple areas, and waypoint numbering management are easier in this version.
-
-However, Player Waypoint Manager and Player Spawn Manager cannot be used at the same time due to function override issues.
--->
+TBC
 
 ### 注意事項 / Caution
 
@@ -92,7 +78,7 @@ Input the username of the players, and place an empty object at a suitable locat
 
 You can also allow instance owner (the person who created the instance) to be teleported like white listed users.
 
-#### Persistenceモード / Persistence Mode
+#### 同期モード / Synced Mode
 
 Save Player Positionをチェック入れると使えます。
 
@@ -102,22 +88,12 @@ Enable Save Player Position and then you're good to go.
 
 Save Interval is how long it will take to before the next time the player's location is saved.
 
-#### エリアモード / Area Mode
+#### Persistence モード / Persistence Mode
 
-> 一時的に無効になっています。
+Save Player Positionをチェック入れたあと、Persistenceをオンにすると使えます。
 
-Persistenceモードを有効にしたあと、Save Only In Areaを有効にすると有効になります。
+Save Intervalはプレイヤーの場所の保存の時間間隔です。
 
-このスクリプトにアタッチしているTriggerが有効になっているコライダーを編集すれば、エリアの指定ができます。
+Enable Persistence after enabling Save Player Position and then you're good to go.
 
-なお、複数コライダーを同時につかっても問題なく動作します。ただし、仕様上、子オブジェクトのコライダーは動作しません。
-
-Triggerを有効にしないとプレイヤーがエリアに入れないのでご注意ください。
-
-Enabling Save Only In Area after enabling Persistence mode to enable this feature.
-
-Then you can edit the collider with Trigger attached with this script to mark the area.
-
-Having multiple colliders on the same object will also work. But all of them should be on this object. Having them on child objects will not work.
-
-If you don't have Trigge on, the colliders may prevent the player from getting into the designed area.
+Save Interval is how long it will take to before the next time the player's location is saved.
