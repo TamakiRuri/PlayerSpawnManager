@@ -50,10 +50,10 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
     [SerializeField] private float saveInverval = 5f;
 
     [Header(" ")]
-    [Header("ホワイトリストに入ってる人しか使えないようにする")]
+    [Header("ホワイトリストに入ってるプレイヤーしか使えないようにする")]
     [SerializeField] private bool isWhiteListedOnly;
     [Header(" ")]
-    [Header("ホワイトリストに入ってる人を除く")]
+    [Header("ホワイトリストに入ってるプレイヤーを除く")]
     [Header("上のと同時に使うと実質無効になります")]
     [SerializeField] private bool isWhiteListExcluded;
 
