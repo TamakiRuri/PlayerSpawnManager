@@ -1,14 +1,14 @@
 # Player Spawn Manager
 
-# プレイヤーのスポーン地点を設定、管理するツール
+# [ホワイトリスト機能付き] プレイヤーのスポーン地点を設定、位置を保存するツール
 
 ### 紹介
 
-Player Spawn ManagerはPersistencyを利用した、VRChatワールドにおいてプレイヤーのスポーン地点を変更するツールです。
+Player Spawn ManagerはPersistenceを利用した、プレイヤーのスポーン地点を設定し、位置を保存するVRChatワールドギミックです。
 
 ぶいすいのときにタイムアウト対策や、イベントワールドでスタッフだけ別の場所にスポーンさせるなどの場面で活躍できます。
 
-Player Spawn Manager is a VRChat World Gimmick that manages player's spawn locations utilizing VRChat Persistency.
+Player Spawn Manager is a VRChat World Gimmick that manages player's spawn locations utilizing VRChat Persistence.
 
 It is designed so solve problems like Timeouts while sleeping (so you can get back directly to bed), and it can be used to set staffs' spawn to a different place than usual players.
 
@@ -16,7 +16,7 @@ It is designed so solve problems like Timeouts while sleeping (so you can get ba
 
 #### ホワイトリストモード / Whitelist Mode
 
-ホワイトリストにいる人、もしくはインスタンスを作った人(Groupインスタンス以外)だけスポーン地点を違う場所に設定する*ことができます。
+ホワイトリストにいるプレイヤー、もしくはインスタンスを作ったプレイヤー(Groupインスタンス以外)だけスポーン地点を違う場所に設定する*ことができます。
 
 Respawnや、Rejoinも対応しています。
 
@@ -54,7 +54,7 @@ This settings will limit the auto save feature to be only for whitelisted player
 
 #### ホワイトリストにいるプレイヤーを除く / White Listed Excluded
 
-定期保存機能はホワイトリストにいるプレイヤーだけが使えないようになります。
+定期保存機能がホワイトリストにいるプレイヤーだけが使えないようになります。
 
 この設定をオンにしない限り、Rejoinのスポーン地点が定期保存機能で上書きされます。(Respawn、(同期モードのみ)初回Joinは通常通り動作します)
 
@@ -82,7 +82,7 @@ For Instaces larger than 40 players, this value should be 5s or higher.
 
 #### Cleaning Mode (Beta)
 
-同期モードでは、インスタンスにいないプレイヤーのデータも同期されます。
+同期モードでは、同じインスタンスに入ったことがあるが、インスタンスにいないプレイヤーのデータも同期されます。
 
 そのため、最大人数に制限を設けることで、同期によるラグを緩和できます。
 
@@ -115,7 +115,7 @@ This will be output every time the locations are saved. This could cause more th
 
 ### 注意事項 / Caution
 
-プレイヤーの場所の保存間隔が短すぎると重くなる恐れがあります。
+プレイヤー位置の保存間隔が短すぎると重くなる恐れがあります。
 
 複数設置できません。ほかのプレイヤーのスポーン地点（VRChat SDKのWorld Descripter除く）やリスポーン地点を変更するスクリプトと競合する恐れがあります。
 

@@ -59,10 +59,13 @@ MonoBehaviour:
   allowInstanceOwner: 1
   targetTransform: {fileID: 0}
   savePlayerPosition: 1
+  saveInverval: 5
   isWhiteListedOnly: 0
   isWhiteListExcluded: 0
+  limitSaveCount: 1
+  limitThrehold: 60
   persistence: 0
-  saveInverval: 10
+  debugMode: 0
 --- !u!114 &7763857556319528016
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -62,7 +62,7 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
     [Header("同期する最大人数を制限する")]
     [Header("制限を超えると、いまインスタンスにいないプレイヤーのデータが上書きされます")]
     [Header("インスタンスの最大人数より大きく設定してください")]
-    [Header("重くなりますのでできるだけ100以下でお願いします")]
+    [Header("重くなりますのでできるだけ100以下にしてください")]
     [Header("Synced Mode Only")]
     [Header("Limit maximum amout of people being saved")]
     [Header("Exceeding the limit will cause data of players who aren't in the instance to be overwritten")]
@@ -319,6 +319,9 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
             isPaused = true;
             isSaved = false;
             PlayerData.SetBool(PlayerSavedKey, false);
+            savedPlayerLocation = new Vector3[0];
+            savedPlayerQuaternion = new Quaternion[0];
+            savedUsers = new string[0];
             RequestSerialization();
         }
     }
