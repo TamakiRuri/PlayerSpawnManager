@@ -348,14 +348,28 @@ public class PlayerSpawnManager : LibPlayerSpawnManager
     }
     public void TeleportToSavedPosition()
     {
-        int index = Array.IndexOf(savedUsers, Networking.LocalPlayer.displayName);
-        if (index == -1)
+        if (savePlayerPosition)
+        if (!persistence)
         {
-            Debug.Log("Player Spawn Manager: Teleport Debug : No Saved Location");
-            return;
+            int index = Array.IndexOf(savedUsers, Networking.LocalPlayer.displayName);
+            if (index == -1)
+            {
+                Debug.LogWarning("Player Spawn Manager: Teleport Debug : No Saved Location");
+                return;
+            }
+            PrintDebugInfo("Teleport Debug ");
+            Networking.LocalPlayer.TeleportTo(savedPlayerLocation[index], savedPlayerQuaternion[index]);
         }
-        PrintDebugInfo("Teleport Debug ");
-        Networking.LocalPlayer.TeleportTo(savedPlayerLocation[index], savedPlayerQuaternion[index]);
+        else
+        {
+            Vector3 l_targetPosition = PlayerData.GetVector3(Networking.LocalPlayer, PlayerPositionKey);
+            Quaternion l_targetRotation = PlayerData.GetQuaternion(Networking.LocalPlayer,PlayerRotationKey);
+            if (l_targetPosition!= null && l_targetRotation != null)
+            Networking.LocalPlayer.TeleportTo(l_targetPosition,l_targetRotation);
+            else
+            Debug.LogWarning("Player Spawn Manager: Teleport Debug : No Saved Location");
+        }
+        
     }
     
 
