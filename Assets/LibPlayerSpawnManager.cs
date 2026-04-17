@@ -7,7 +7,7 @@ using VRC.Udon;
 
 namespace com.rurinya.spawnmanager
 {
-    public class LibPlayerSpawnManager : UdonSharpBehaviour
+    public abstract class LibPlayerSpawnManager : UdonSharpBehaviour
     {
         protected static T[] Append<T>(T[] array, T value)
         {
