@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: LibPlayerSpawnManager
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: e209425b0ccea8f4da711a56d8f9bd45,
-    type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: d192dd04ca957ad43ac118020d584314, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 7d6d3bb330f81b74986f98a923d06838, type: 3}
@@ -21,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 537212932791102283
+  scriptID: 232594170359365035
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

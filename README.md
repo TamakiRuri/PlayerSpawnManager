@@ -1,46 +1,50 @@
 # Player Spawn Manager
 
-# [ホワイトリスト機能付き] プレイヤーのスポーン地点を設定、位置を保存するツール
+# プレイヤーのスポーン地点のホワイトリスト、保存システム
 
 ### 紹介
 
-Player Spawn ManagerはPersistenceを利用した、プレイヤーのスポーン地点を設定し、位置を保存するVRChatワールドギミックです。
+Player Spawn ManagerはVRChat ワールドでPersistenceを利用した、プレイヤーのスポーン地点のホワイトリスト、保存システムです。
 
 ぶいすいのときにタイムアウト対策や、イベントワールドでスタッフだけ別の場所にスポーンさせるなどの場面で活躍できます。
 
-Player Spawn Manager is a VRChat World Gimmick that manages player's spawn locations utilizing VRChat Persistence.
+このギミックの実装では、プレイヤーは初期のスポーン地点にスポーンしたあと、同期されたときに指定の場所にテレポートされます。（通常では、1秒間かかります）
+
+Player Spawn Manager is a VRChat World Gimmick that teleport players to saved locations utilizing VRChat Persistence, with extra whitelist support.
 
 It is designed so solve problems like Timeouts while sleeping (so you can get back directly to bed), and it can be used to set staffs' spawn to a different place than usual players.
+
+What actually happen is the player is teleported to the default spawn, and then to the target position after a really short time.
 
 ### モード / Modes
 
 #### ホワイトリストモード / Whitelist Mode
 
-ホワイトリストにいるプレイヤー、もしくはインスタンスを作ったプレイヤー(Groupインスタンス以外)だけスポーン地点を違う場所に設定する*ことができます。
+ホワイトリストにいるプレイヤー、もしくはインスタンスを作ったプレイヤー(Groupインスタンス以外)だけスポーン地点を違う場所に設定することができます。
 
 Respawnや、Rejoinも対応しています。
 
-Set the spawn* of the players in the Whitelist (and/or instance owner) to a different location.
+Set the spawn of the players in the Whitelist (and/or instance owner) to a different location.
 
 This also applys to Respawns and Rejoins.
 
 #### 同期モード / Synced Mode
 
-プレイヤーの場所を設定した時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます*。
+プレイヤーの場所を設定した時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます。
 
 同じインスタンスでのRejoinのみ動作します。
 
-Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved*.
+Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved.
 
 This mode only works on Rejoins at the same instance.
 
 #### Persistenceモード / Persistence Mode
 
-プレイヤーの場所を設定した時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます*。
+プレイヤーの場所を設定した時間間隔で保存し、次回ワールドに入るときに前回の場所にスポーンさせます。
 
 同期モードと同じRejoinのみ想定していますが、同じワールドの別インスタンスにも動作します。
 
-Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved*.
+Save player's location every a few seconds, and if the player rejoins the instance, they will always appear at the place where the last time the script have auto-saved.
 
 This mode works on Rejoins on all instances of the same world.
 
@@ -70,7 +74,7 @@ Respawn and joining for the first time (only on synced mode) will still spawn at
 
 デフォルト：5秒
 
-2秒以下の設定はおすすめできません。
+重くなるため、2秒以下はおすすめしません。
 
 40人以上を想定するインスタンスでは5秒以上にしてください。
 
@@ -80,7 +84,7 @@ Setting this to a value lower than 2s is not recommended.
 
 For Instaces larger than 40 players, this value should be 5s or higher.
 
-#### Cleaning Mode (Beta)
+#### 保存制限 / Limit Save Count (Beta)
 
 同期モードでは、同じインスタンスに入ったことがあるが、インスタンスにいないプレイヤーのデータも同期されます。
 
@@ -115,51 +119,33 @@ This will be output every time the locations are saved. This could cause more th
 
 ### 注意事項 / Caution
 
-プレイヤー位置の保存間隔が短すぎると重くなる恐れがあります。
-
 複数設置できません。ほかのプレイヤーのスポーン地点（VRChat SDKのWorld Descripter除く）やリスポーン地点を変更するスクリプトと競合する恐れがあります。
 
-*実際は、一回デフォルトのスポーン地点にリスポーン、またはスポーンしたあと、自動で指定または保存した場所にテレポートさせます。
-
-Do not set the time interval of saving to less than a few seconds, or this could cause lags.
-
 There cannot be more than 1 of this script in the same scene. This can also cause issues if you use other scripts that changes player spawn / respawn locations (except World Descriptor, which is from VRChat SDK).
-
-*What actually happen is the player is teleported to the default spawn, and then to the target position after a really short time.
 
 
 ### 導入方法
 
-StudioSaphir/PlayerSpawnManagerフォルダにあるプレハブをシーンにドラッグアンドドロップする
+Assets/StudioSaphir/PlayerSpawnManagerフォルダにあるプレハブをシーンにドラッグアンドドロップする
 
 Drag and drop the prefab from StudioSaphir/PlayerSpawnManager folder
 
 #### ホワイトリストモード / Whitelist Mode
 
-プレイヤーのユーザー名を入力し、テレポート先に空のオブジェクトを設置し、このスクリプトのTarget Transformに入れると有効になります。
+プレイヤーのユーザー名を入力し、テレポート先に空のオブジェクトを設置したあと、このスクリプトのTarget Transformに入れると有効になります。
 
-ホワイトリストのユーザー以外、インスタンスオーナー（インスタンスを作った人）にも設定できます。
+ホワイトリストのユーザー以外、インスタンスオーナー（インスタンスを作った人）にも設定できます。（グループインスタンスでは動作しません）
 
 Input the username of the players, and place an empty object at a suitable location. After that, assign the object to Target Transform to enable this feature.
 
-You can also allow instance owner (the person who created the instance) to be teleported like white listed users.
+You can also allow instance owner (the person who created the instance) to be teleported like white listed users. (This does not work in group instances)
 
-#### 同期モード / Synced Mode
+#### 同期・Persistenceモード / Synced / Persistence Mode
 
-Save Player Positionをチェック入れると有効になります。
-
-Save Intervalは保存の時間間隔です。
-
-Enable Save Player Position and then you're good to go.
-
-Save Interval is how long it will take to before the next time the player's location is saved.
-
-#### Persistence モード / Persistence Mode
-
-Save Player Positionをチェック入れたあと、Persistenceをオンにすると有効になります。
+Mode で Syncedモードは同期モード、 PersistenceはPersistenceモードです。
 
 Save Intervalは保存の時間間隔です。
 
-Enable Persistence after enabling Save Player Position and then you're good to go.
+In Modes, synced mode is Synced mode, and persistence mode is Persistence mode. 
 
 Save Interval is how long it will take to before the next time the player's location is saved.
