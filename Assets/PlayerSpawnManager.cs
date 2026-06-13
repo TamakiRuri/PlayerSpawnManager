@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Persistence;
@@ -81,9 +80,6 @@ namespace com.rurinya.spawnmanager
         [Header("It should be bigger than the maximum allowed player in the instance")]
         [SerializeField] private bool limitSaveCount = true;
         [SerializeField] private int limitThrehold = 60;
-
-        // NOT IMPLEMENTED
-        private GameObject teleportToInstances;
 
         
         
@@ -179,6 +175,7 @@ namespace com.rurinya.spawnmanager
         // Synced
         public override void OnDeserialization()
         {
+            if (Networking.LocalPlayer.isMaster) return;
             if (!savePlayerPosition) return;
             if (isPaused) return;
             if (!shouldOn && isWhiteListedOnly) return;
@@ -189,7 +186,7 @@ namespace com.rurinya.spawnmanager
             if (spawnToInstances)
             {
                 haveTeleported = true;
-                TeleportToInstances();
+                // TeleportToInstances();
                 return;
             }
             if ((int)mode == 1) return;
@@ -407,20 +404,7 @@ namespace com.rurinya.spawnmanager
             }
             RequestSerialization();
         }
-        public void TeleportToInstances()
-        {
-            teleportToInstances.GetComponent<UdonBehaviour>().SendCustomEvent("TeleportToTarget");
-        }
-        public void SwitchTargetPlayer()
-        {
-            teleportToInstances.GetComponent<UdonBehaviour>().SendCustomEvent("SwitchTargetPlayer");
-        }
-        public void SwitchTargetObject()
-        {
-            teleportToInstances.GetComponent<UdonBehaviour>().SendCustomEvent("SwitchTargetObject");
-        }
         #endregion
-
 
     }
 }
