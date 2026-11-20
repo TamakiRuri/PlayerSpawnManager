@@ -476,7 +476,7 @@ MonoBehaviour:
       Data: 38|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: com.rurinya.spawnmanager.PlayerSpawnManagerMode, Assembly-CSharp
+      Data: com.rurinya.spawnmanager.PlayerSpawnManagerMode, com.rurinya.spawnmanager
     - Name: 
       Entry: 8
       Data: 

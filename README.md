@@ -10,6 +10,8 @@ Player Spawn ManagerはVRChat ワールドでPersistenceを利用した、プレ
 
 このギミックの実装では、プレイヤーは初期のスポーン地点にスポーンしたあと、同期されたときに指定の場所にテレポートされます。（通常では、1秒間かかります）
 
+Unity 2022.3.22f1 / Unity 6000.0.67f1 対応
+
 Player Spawn Manager is a VRChat World Gimmick that teleport players to saved locations utilizing VRChat Persistence, with extra whitelist support.
 
 It is designed so solve problems like Timeouts while sleeping (so you can get back directly to bed), and it can be used to set staffs' spawn to a different place than usual players.
